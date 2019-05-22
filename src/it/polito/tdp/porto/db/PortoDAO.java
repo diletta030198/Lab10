@@ -144,31 +144,35 @@ try {
 		
 	}
 	
-	public Paper prossimoLibro(Author a1) {
+	public Paper prossimoLibro(Author a1,Author a2) {
 		int cod= a1.getId();
-		
+		int cod2= a2.getId();
+		Paper paper= null; 
 		final String sql = "SELECT p.eprintid,p.title,p.issn,p.publication,p.type,p.types " + 
 				"FROM creator c,paper p, creator c2 " + 
 				"WHERE c.eprintid=p.eprintid AND " + 
 				" c.eprintid=c2.eprintid AND c.authorid like ? AND " + 
-				" c2.authorid NOT LIKE ? " + 
+				" c2.authorid LIKE ? " + 
 				"GROUP BY p.title";
 
 		try {
 			Connection conn = DBConnect.getConnection();
+			
+
 			PreparedStatement st = conn.prepareStatement(sql);
 			st.setInt(1, cod);
-			st.setInt(2, cod);
+			st.setInt(2, cod2);
 
 			ResultSet rs = st.executeQuery();
 
 			if (rs.next()) {
-				Paper paper = new Paper(rs.getInt("p.eprintid"), rs.getString("p.title"), rs.getString("p.issn"),
+				paper = new Paper(rs.getInt("p.eprintid"), rs.getString("p.title"), rs.getString("p.issn"),
 						rs.getString("p.publication"), rs.getString("p.type"), rs.getString("p.types"));
-				return paper;
+				
 			}
+			conn.close();
 
-			return null;
+			return paper;
 
 		} catch (SQLException e) {
 			 e.printStackTrace();

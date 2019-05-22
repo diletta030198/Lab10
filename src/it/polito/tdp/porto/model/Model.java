@@ -22,6 +22,7 @@ public class Model {
 	private Graph <Author,DefaultEdge> grafo; 
 	private Map <Integer,Author> idMapAutori; 
 	
+	
 	public Model() {
 		idMapAutori= new HashMap<Integer,Author>(); 
 		grafo= new SimpleGraph<>(DefaultEdge.class);
@@ -83,10 +84,11 @@ public class Model {
 	}
 	
 	public List <Paper> listPaper(Author partenza, Author arrivo){
-		PortoDAO dao= new PortoDAO(); 
+		PortoDAO dao= new PortoDAO();
 		List <Paper> res= new LinkedList<Paper>(); 
-		for (Author a: this.trovaCamminoMinimo(partenza,arrivo)) {
-			res.add(dao.prossimoLibro(a));
+		List <Author> cammino= this.trovaCamminoMinimo(partenza, arrivo);
+		for (int i=0; i<cammino.size()-1;i++) {
+			res.add(dao.prossimoLibro(cammino.get(i),cammino.get(i+1)));
 		}
 		return res; 
 	}
